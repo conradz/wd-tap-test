@@ -4,6 +4,9 @@ Run TAP tests in the browser from your console using WebDriver. It uses a
 Selenium server to start and automate the browsers. The test file must output
 TAP-compatible output in the browser with `console.log`.
 
+Note that you *must* have a Selenium server running to be able to start and
+automate the browsers.
+
 ## Install
 
 Use NPM to install:
