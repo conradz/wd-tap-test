@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "wd": "~0.1.5",
-    "wd-tap-runner": "0.0.6",
+    "wd-tap-runner": "0.0.7",
     "async": "~0.2.9",
     "browserify": "~2.32.4",
     "nomnom": "~1.6.1",
