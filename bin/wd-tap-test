@@ -1,0 +1,132 @@
+#!/usr/bin/env node
+var parser = require('nomnom'),
+    path = require('path'),
+    ansi = require('ansi')(process.stdout),
+    lib = require('../');
+
+parser.options({
+    'server': {
+        default: 'localhost',
+        help: 'Selenium server address'
+    },
+    'browsers': {
+        position: 1,
+        help: 'Browsers to run the tests in',
+        list: true,
+        default: ['firefox']
+    },
+    'source': {
+        abbr: 's',
+        help: 'JS file that includes tests',
+        default: 'test.js'
+    },
+    'browserify': {
+        abbr: 'b',
+        help: 'Browserify source before serving',
+        flag: true
+    }
+});
+
+parser.command('watch')
+    .help('Watch the current directory and run tests when a file changes')
+    .callback(watch);
+
+parser.command('run')
+    .help('Run the tests in the browsers')
+    .callback(run);
+
+parser.nocommand()
+    .callback(function() {
+        console.error('No command specified.');
+        process.exit(1);
+    });
+
+parser.parse();
+
+function watch(options) {
+    var watcher = lib.watch(getConfig(options));
+    watcher.on('run', function(runner) {
+        logRun(runner, false);
+    });
+}
+
+function run(options) {
+    logRun(lib.run(getConfig(options)), true);
+}
+
+function getConfig(options) {
+    return {
+        browsers: options.browsers.map(getBrowser),
+        browserify: options.browserify,
+        source: path.resolve(process.cwd(), options.source),
+        server: options.server
+    };
+}
+
+function getBrowser(name) {
+    return { browserName: name };
+}
+
+function logRun(runner, exit) {
+    var failed = false,
+        browser;
+
+    log('Starting test run');
+
+    runner.on('begin', begin);
+    runner.on('results', results);
+    runner.on('error', onError);
+    runner.on('end', end);
+
+    function log(text) {
+        ansi.write(text + '\n');
+    }
+
+    function success(text) {
+        ansi.fg.green().write(text + '\n').reset();
+    }
+
+    function error(text) {
+        ansi.fg.red().write(text + '\n').reset();
+    }
+
+    function begin(b) {
+        browser = b.browserName;
+        log('Testing browser ' + browser + '...');
+    }
+
+    function results(result) {
+        result.fail.forEach(function(t) {
+            error('Test #' + t.number + ': ' + t.name + ' failed');
+        });
+
+        result.errors.forEach(function(e) {
+            error('TAP parsing error: ' + e.message);
+        });
+
+        if (result.ok) {
+            success('Browser ' + browser + ' succeeded');
+        } else {
+            failed = true;
+            error('Browser ' + browser + ' failed');
+        }
+    }
+
+    function onError(err) {
+        failed = true;
+        error('Error occurred');
+        error(err.toString());
+    }
+
+    function end() {
+        if (failed) {
+            error('Test run failed');
+        } else {
+            success('Test run succeeded');
+        }
+
+        if (exit) {
+            process.exit(failed ? 1 : 0);
+        }
+    }
+}
