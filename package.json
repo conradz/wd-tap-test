@@ -4,7 +4,7 @@
   "description": "Run TAP tests in the browser from the console using WebDriver",
   "main": "index.js",
   "scripts": {
-    "test": "bin/wd-tap-test run -b firefox"
+    "test": "bin/wd-tap-test run -b firefox chrome"
   },
   "repository": {
     "type": "git",
