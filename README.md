@@ -1,11 +1,12 @@
 # wd-tap-test(1)
 
-Run TAP tests in the browser from your console using WebDriver. It uses a
-Selenium server to start and automate the browsers. The test file must output
-TAP-compatible output in the browser with `console.log`.
+Run [TAP](http://testanything.org/wiki/index.php/Main_Page) tests in the
+browser from your console using WebDriver. It uses a
+[Selenium Server](http://docs.seleniumhq.org/download/) to launch and automate
+the browsers. The test file must output TAP-compatible output when running in
+the browser with `console.log`.
 
-Note that you *must* have a Selenium server running to be able to start and
-automate the browsers.
+Note that you *must* have a Selenium Server running.
 
 ## Install
 
@@ -13,35 +14,39 @@ Use NPM to install:
 
     npm install -g wd-tap-test
 
-## Usage
+## Options
 
-```
-Usage: wd-tap-test <command> [browsers]... [options]
+    wd-tap-test <options> [browsers...]
 
-command      one of: watch, run
-browsers     Browsers to run the tests in
-
-Options:
-   --server           Selenium server address  [localhost]
-   -s, --source       JS file that includes tests  [test.js]
-   -b, --browserify   Browserify source before serving
-```
+ * `browsers`: The names of the browsers to run the tests in (`firefox`,
+   `chrome`, etc.). Each browser name will be passed to the Selenium Server in
+   the `browserName` option when launching the browser.  Defaults to `firefox`.
+ * `-w, --watch`: Watch the current directory for changes and run tests when
+   any file changes.
+ * `-b, --browserify`:
+   [Browserify](https://github.com/substack/node-browserify) the source file
+   before serving to the browser.
+ * `-s, --source`: Specify the source file that contains the tests. Defaults to
+   `test.js`.
+ * `--server`: Specify the Selenium Server address to use.
+ * `-?, --help`: Show the help message
 
 ## Examples
 
-Run the `test.js` file in Chrome and Firefox:
+Run the `test.js` file in Firefox:
 
-    wd-tap-test run chrome firefox
+    wd-tap-test
 
-Run the `my-tests.js` file in Chrome:
+Run the `my-tests.js` file in Firefox and Chrome:
 
-    wd-tap-test run -s my-tests.js chrome
+    wd-tap-test -s my-tests.js firefox chrome
 
 Browserify and run the `test.js` file in Firefox:
 
-    wd-tap-test run -b
+    wd-tap-test -b
 
 Watch the current directory for changes and run the `test.js` file in Chrome
 whenever a file changes:
 
-    wd-tap-test watch chrome
+    wd-tap-test -w chrome
+

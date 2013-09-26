@@ -1,65 +1,71 @@
 #!/usr/bin/env node
-var parser = require('nomnom'),
+var optimist = require('optimist'),
     path = require('path'),
     ansi = require('ansi')(process.stdout),
     lib = require('../');
 
-parser.options({
-    'server': {
+var args = optimist
+    .usage(
+        '$0 <options> [browsers...]\n' +
+        'Run tests in the browser using a Selenium Server.')
+    .options('w', {
+        alias: 'watch',
+        boolean: true,
+        describe: 'Watch the current directory and run tests when a file changes'
+    })
+    .options('b', {
+        alias: 'browserify',
+        boolean: true,
+        describe: 'Browserify source file before serving'
+    })
+    .options('s', {
+        alias: 'source',
+        default: 'test.js',
+        describe: 'Test source file'
+    })
+    .options('server', {
         default: 'localhost',
-        help: 'Selenium server address'
-    },
-    'browsers': {
-        position: 1,
-        help: 'Browsers to run the tests in',
-        list: true,
-        default: ['firefox']
-    },
-    'source': {
-        abbr: 's',
-        help: 'JS file that includes tests',
-        default: 'test.js'
-    },
-    'browserify': {
-        abbr: 'b',
-        help: 'Browserify source before serving',
-        flag: true
-    }
-});
+        describe: 'Selenium server to use'
+    })
+    .options('?', {
+        alias: 'help',
+        boolean: true,
+        describe: 'Show help message'
+    })
+    .argv;
 
-parser.command('watch')
-    .help('Watch the current directory and run tests when a file changes')
-    .callback(watch);
+var config = getConfig();
 
-parser.command('run')
-    .help('Run the tests in the browsers')
-    .callback(run);
+if (args.help) {
+    optimist.showHelp();
+    process.exit(1);
+} else if (args.watch) {
+    watch();
+} else {
+    run();
+}
 
-parser.nocommand()
-    .callback(function() {
-        console.error('No command specified.');
-        process.exit(1);
-    });
-
-parser.parse();
-
-function watch(options) {
-    var watcher = lib.watch(getConfig(options));
+function watch() {
+    var watcher = lib.watch(config);
     watcher.on('run', function(runner) {
         logRun(runner, false);
     });
 }
 
-function run(options) {
-    logRun(lib.run(getConfig(options)), true);
+function run() {
+    logRun(lib.run(config), true);
 }
 
-function getConfig(options) {
+function getConfig() {
+    if (args._.length === 0) {
+        args._ = ['firefox'];
+    }
+
     return {
-        browsers: options.browsers.map(getBrowser),
-        browserify: options.browserify,
-        source: path.resolve(process.cwd(), options.source),
-        server: options.server
+        browsers: args._.map(getBrowser),
+        browserify: args.browserify,
+        source: path.resolve(process.cwd(), args.source),
+        server: args.server
     };
 }
 
