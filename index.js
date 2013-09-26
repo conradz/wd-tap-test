@@ -90,7 +90,10 @@ function watch(config) {
         }
 
         running = true;
+
         var runner = run(config);
+        runner.on('end', done);
+
         events.emit('run', runner);
     }
 
