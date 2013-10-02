@@ -1,6 +1,6 @@
 {
   "name": "wd-tap-test",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Run TAP tests in the browser from the console using WebDriver",
   "main": "index.js",
   "scripts": {
