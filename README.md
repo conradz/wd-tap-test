@@ -1,5 +1,10 @@
 # wd-tap-test(1)
 
+[![NPM](https://nodei.co/npm/wd-tap-test.png?compact=true)](https://nodei.co/npm/wd-tap-test/)
+
+[![Build Status](https://drone.io/github.com/conradz/wd-tap-test/status.png)](https://drone.io/github.com/conradz/wd-tap-test/latest)
+[![Dependency Status](https://gemnasium.com/conradz/wd-tap-test.png)](https://gemnasium.com/conradz/wd-tap-test)
+
 Run [TAP](http://testanything.org/wiki/index.php/Main_Page) tests in the
 browser from your console using WebDriver. It uses a
 [Selenium Server](http://docs.seleniumhq.org/download/) to launch and automate
