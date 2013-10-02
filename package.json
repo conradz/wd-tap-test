@@ -23,11 +23,11 @@
   },
   "dependencies": {
     "wd": "~0.1.5",
-    "wd-tap-runner": "0.0.7",
+    "wd-tap-runner": "0.0.8",
     "async": "~0.2.9",
-    "browserify": "~2.32.4",
+    "browserify": "~2.33.1",
     "watch": "~0.8.0",
-    "lodash": "~2.1.0",
+    "lodash": "~2.2.0",
     "ansi": "~0.2.1",
     "optimist": "~0.6.0"
   },
